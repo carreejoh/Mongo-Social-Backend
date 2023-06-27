@@ -31,11 +31,11 @@ const thoughtSchema = new Schema(
       }
 );
 
-thoughtSchema 
-    .virtual('reactions')
-    .get(function () {
-        return this.reactions.length;
-    });
+// thoughtSchema 
+//     .virtual('reactions')
+//     .get(function () {
+//         return this.reactions.length;
+//     });
 
 const Thought = model('thoughts', thoughtSchema);
 
