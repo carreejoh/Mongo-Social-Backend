@@ -6,14 +6,26 @@ module.exports = {
         try {
             const users = await User.find()
                 .populate({ path: 'friends', select: '-__v' });
-                res.json(users);
+            res.json(users);
         } catch (err) {
-            console.error({ message: err });
             res.status(500).json(err);
         }
     },
 
-    //Do route for single user
+    async getSinglePost(req, res) {
+        try {
+            const user = await User.findOne({ _id: req.params.userId })
+                .populate({ path: 'friends', select: '-__v' });
+
+            if (!user) {
+                return res.status(404).json({ message: 'No user with that ID' });
+            }
+
+            res.json(user);
+        } catch (err) {
+            res.status(500).json(err);
+        }
+    },
 
     async postUser(req, res) {
         try {
@@ -24,5 +36,25 @@ module.exports = {
         }
     },
 
+    async updateUser(req, res) {
+        try {
+            const user = await User.findOneAndUpdate({ _id: req.params.userId }, req.body)
+            .populate({ path: 'friends', select: '-__v' });
+            res.json(user);
+        } catch (err) {
+            res.status(500).json(err);
+        }
+    },
 
+    async deleteUser(req, res) {
+        try {
+            const user = await User.deleteOne({ _id: req.params.userId })
+            if (!user) {
+                return res.status(404).json({ message: 'No user with that ID' });
+            }
+            res.json({ message: "User deleted successfully"});
+        } catch (err) {
+            res.status(500).json(err)
+        }
+    }
 };
