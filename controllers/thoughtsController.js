@@ -1,4 +1,4 @@
-const { User, Thought } = require('../models');
+const { User, Thought, Reactions } = require('../models');
 
 module.exports = {
 
@@ -63,6 +63,40 @@ module.exports = {
             res.json({ message: "Thought deleted successfully"});
         } catch (err) {
             res.status(500).json(err)
+        }
+    },
+
+    async addReaction(req, res) {
+        try {
+            const thought = await Thought.findOneAndUpdate(
+                { _id: req.params.thoughtId },
+                { $addToSet: { reactions: req.body} },
+                { new: true }
+            );
+
+            if(!thought) {
+                return res.status(404).json({ message: 'Something went wrong' })
+            }
+
+            res.json(thought);
+        } catch (err) {
+            console.error(err);
+        }
+    },
+
+    async deleteReaction(req, res) {
+        try {
+            const thought = await Thought.findOneAndUpdate(
+                { _id: req.params.thoughtId },
+                { $pull: { reactions: { reactionsId: req.params.reactionsId } } },
+                { new: true }
+            );
+            if(!thought) {
+                return res.status(404).json({ message: 'Something went wrong' })
+            }
+            res.json(thought);
+        } catch (err) {
+            console.error(err);
         }
     }
 
